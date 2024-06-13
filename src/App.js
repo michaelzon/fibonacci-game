@@ -42,16 +42,16 @@ const getNthFibonacci = (n, cache = { 1: 0, 2: 1 }) => {
 
 
 function App() {
-  const [map, setMap] = useState(generateMap(size));
+  // const [map, setMap] = useState(generateMap(size));
+  const [map, setMap] = useState(new Map());
   const [clickedRow, setClickedRow] = useState(null);
   const [clickedCol, setClickedCol] = useState(null);
   const cache = getNthFibonacci(30);
   const fibs = Object.values(cache);
   const fibSet = new Set(fibs);
 
-
-
   const checkSequences = () => {
+    const newMap = new Map(map);
 
     // eerst verticaal
     const seq = [];
@@ -66,29 +66,30 @@ function App() {
       }
     };
 
-    // console.log('seq', seq);
+    console.log('seq', seq);
 
     const seqSet = new Set(seq);
 
-    // console.log('seqSet', seqSet)
+    console.log('seqSet', seqSet)
 
     // het is alleen true als ze er allemaal onderdeel van zijn en als de set een grote heeft van 5, elk element binnen een set moet uniek zijn.
     const fibInSeq = seqSet.isSubsetOf(fibSet) && seqSet.size === 5;
-
+    console.log(fibInSeq);
     if (fibInSeq) {
       for (let i = 4; i >= 0; i--) {
-        map.delete(`${clickedRow - i}:${0}`);
+        newMap.delete(`${clickedRow - i}:${0}`);
         console.log('updated map after fib seq ', map)
       }
-
-
+      setMap(newMap)
       // hoe weet je welke coordinaten je moet hebben? 
       // clearCells()
     }
+
   }
 
   useEffect(() => {
     checkSequences();
+    console.log('map', map)
   }, [map])
 
   const incrementCells = (row, col, map) => {
@@ -99,31 +100,16 @@ function App() {
 
     const newMap = new Map(map);
 
-    var key = `${row}:${col}`
-    var currentVal = map.get(key);
-
-    console.log('key', key)
-
-    // if (currentVal === NaN || currentVal === undefined) {
-      // newMap.set(key, 1)
-    // }
-
-    newMap.set(key, currentVal + 1);
-
-    for (let i = 0; i < size; i++) {
-      if (i !== col) {
-        const key = `${row}:${i}`;
-        var currentVal = map.get(key);
-        newMap.set(key, currentVal + 1);
-      }
+    for (let y = 0; y < size; y++) {
+      const key = `${row}:${y}`;
+      const colVal = map.get(key);
+      newMap.set(key, (colVal === undefined || isNaN(colVal)) ? 1 : colVal + 1)
     };
 
-    for (let j = 0; j < size; j++) {
-      if (j !== row) {
-        const key = `${j}:${col}`;
-        var currentVal = map.get(key);
-        newMap.set(key, currentVal + 1);
-      }
+    for (let x = 0; x < size; x++) {
+      const key = `${x}:${col}`;
+      const rowVal = map.get(key);
+      newMap.set(key, (rowVal === undefined || isNaN(rowVal)) ? 1 : rowVal + 1)
     };
 
     setMap(newMap)
@@ -158,7 +144,6 @@ function App() {
 
   // console.log('processSequenceFirefox', processSequenceFirefox);
 
-  
 
   return (
     <>
@@ -177,7 +162,7 @@ function App() {
               <td className='first'>{row}</td>
               {columns.map((col) => {
                 return (
-                  <td key={col} onClick={() => incrementCells(row, col, map)}>{map.get(`${row}:${col}`) ? map.get(`${row}:${col}`) : '' }</td>
+                  <td key={col} onClick={() => incrementCells(row, col, map)}>{map.get(`${row}:${col}`) ? map.get(`${row}:${col}`) : ''}</td>
                 )
               })}
             </tr>
