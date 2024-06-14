@@ -3,9 +3,6 @@ import './App.css';
 
 // 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233 
 
-//  5, 8, 13, 21, 34, 55, 89
-
-
 // zo kan je er over heen loopen 
 // function logMapElements(value, key, map) {
 //   console.log(`[${key}] = ${value}`);
@@ -17,21 +14,42 @@ import './App.css';
 // const cache = getNthFibonacci(13);
 // let exists = Object.values(cache).includes(89);
 
+// const generateMap = (size) => {
+//   const map = new Map();
+//   for (let i = 0; i < size; i++) {
+//     for (let j = 0; j < size; j++) {
+//       const key = `${i}:${j}`
+//       map.set(key, null)
+//     }
+//   }
+//   return map;
+// };
+
+// const subset = new Set(subarr);
+// const fibset = new Set([0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233]);
+
+// // wanneer chrome: 
+// const processSequenceChrome = subset.isSubsetOf(fibset);
+// console.log('processSequenceChrome', processSequenceChrome);
+
+// // wanneer firefox
+// var count = 0;
+// var processSequenceFirefox = false;
+
+// for (let i = 0; i < 5; i++) {
+//   if (fibset.has(subarr[i])) {
+//     count++
+//   }
+//   if (count === 4) {
+//     processSequenceFirefox = true;
+//   }
+// }
+
+// console.log('processSequenceFirefox', processSequenceFirefox);
 
 const size = 10;
 
-const generateMap = (size) => {
-  const map = new Map();
-  for (let i = 0; i < size; i++) {
-    for (let j = 0; j < size; j++) {
-      const key = `${i}:${j}`
-      map.set(key, null)
-    }
-  }
-  return map;
-};
-
-const getNthFibonacci = (n, cache = { 1: 0, 2: 1 }) => {
+const getNthFibonacci = (n, cache = { 1: 1, 2: 1 }) => {
   if (n in cache) {
     return cache;
   } else {
@@ -41,55 +59,106 @@ const getNthFibonacci = (n, cache = { 1: 0, 2: 1 }) => {
 }
 
 
+function getKeyByValue(cache, value) {
+  for (let prop in cache) {
+    if (cache.hasOwnProperty(prop)) {
+      if (cache[prop] === value)
+        return prop;
+    }
+  }
+}
+
 function App() {
   // const [map, setMap] = useState(generateMap(size));
   const [map, setMap] = useState(new Map());
   const [clickedRow, setClickedRow] = useState(null);
   const [clickedCol, setClickedCol] = useState(null);
-  const cache = getNthFibonacci(30);
-  const fibs = Object.values(cache);
+  const fibCache = getNthFibonacci(30);
+  const fibs = Object.values(fibCache);
   const fibSet = new Set(fibs);
+  console.log('fibCache;', fibCache)
 
   const checkSequences = () => {
     const newMap = new Map(map);
 
+    // todo maak collectie van sequenties van de regio die je wil gaan beoordelen 
+    const verticalSeqs = [];
+
     // eerst verticaal
     const seq = [];
 
-    for (let i = 4; i >= 0; i--) {
-      // dit werkt voor nu alleen nog maar voor eerste kolom
-      let value = map.get(`${clickedRow - i}:${0}`)
+    for (let i = 0; i < size; i++) {
+      for (let j = 4; j >= 0; j--) {
+        // dit werkt voor nu alleen nog maar voor eerste kolom
+        let value = map.get(`${clickedRow - j}:${i}`)
+  
+        // value is eerst null of undefined, maar deze check kan wel weg als die useEffect en de trigger voor deze functie beter is. 
+        if (value !== null || value !== undefined) {
+          seq.push(value);
+        }
+      };
+  
+      verticalSeqs.push(seq)
+    }
 
-      // value is eerst null of undefined, maar deze check kan wel weg als die useEffect en de trigger voor deze functie beter is. 
-      if (value !== null || value !== undefined) {
-        seq.push(value);
-      }
-    };
+   
 
-    console.log('seq', seq);
+    // for (let i = 0; i < seq.length; i++) {
+    // console.log(seq[i]);
+    // }
 
-    const seqSet = new Set(seq);
-
-    console.log('seqSet', seqSet)
 
     // het is alleen true als ze er allemaal onderdeel van zijn en als de set een grote heeft van 5, elk element binnen een set moet uniek zijn.
+    const seqSet = new Set(seq);
     const fibInSeq = seqSet.isSubsetOf(fibSet) && seqSet.size === 5;
-    console.log(fibInSeq);
+
+    console.log('fibset', fibSet);
+    console.log('seqset', seqSet);
+    console.log('fib in seq', fibInSeq)
+
+    // todo check ook nog of ze achtereenvolgend in de fiboseq zijn. ik retrieve de key uit de cache met de eerste value van de sequence (en daarmee ook de laagste, hoef ik minder te ittereren tijdens het ophalen van de key en ga daarna gewoon kijken of de vier values van de opeenvolgende keys uit het cache object overeenkomen met de waardes in mijn cache. )
+    // moet je wel aparte regels schrijven voor wanner je van boven naar onder gaat controleren? of je sorteert ze gewoon eerst altijd oplopend 
+    // je wil dit ook pas doen als fibInSeq op true staat, anders gaat ie onnodig values opzoeken die toch niet in de fibreeks staan. 
+    
+    console.log('seqje dat we gaan checken:', seq)
+    let keyForLookUp = Number(getKeyByValue(fibCache, seq[0]));
+
+    console.log('eerste element uit seq heeft key in fibocache:', keyForLookUp);
+
+    let consecutiveFibos = false;
+
     if (fibInSeq) {
+
+      for (let i = 0; i < 5; i++) {
+        // Increment keyForLookUp by i
+        console.log('keyForLookUp', keyForLookUp);
+        console.log('i', i);
+        const adjacentKey = keyForLookUp+i;
+        console.log('adjacentKey', adjacentKey);
+        console.log('fibCache[adjacentKey]', fibCache[adjacentKey])
+        if (seq[i] === fibCache[adjacentKey]){
+          consecutiveFibos = true
+        }
+        else {
+          consecutiveFibos = false
+        };
+      }
+  
+      console.log('consecutive fibos', consecutiveFibos);
+    }
+
+    if (fibInSeq && consecutiveFibos) {
       for (let i = 4; i >= 0; i--) {
         newMap.delete(`${clickedRow - i}:${0}`);
-        console.log('updated map after fib seq ', map)
       }
       setMap(newMap)
       // hoe weet je welke coordinaten je moet hebben? 
       // clearCells()
     }
-
   }
 
   useEffect(() => {
     checkSequences();
-    console.log('map', map)
   }, [map])
 
   const incrementCells = (row, col, map) => {
@@ -121,29 +190,6 @@ function App() {
 
   const rows = Array.from(Array(size).keys());
   const columns = Array.from(Array(size).keys());
-  const subarr = [1, 1, 2, 3, 5];
-  const subset = new Set(subarr);
-  const fibset = new Set([0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233]);
-
-  // wanneer chrome: 
-  const processSequenceChrome = subset.isSubsetOf(fibset);
-  // console.log('processSequenceChrome', processSequenceChrome);
-
-  // wanneer firefox
-  var count = 0;
-  var processSequenceFirefox = false;
-
-  for (let i = 0; i < 5; i++) {
-    if (fibset.has(subarr[i])) {
-      count++
-    }
-    if (count === 4) {
-      processSequenceFirefox = true;
-    }
-  }
-
-  // console.log('processSequenceFirefox', processSequenceFirefox);
-
 
   return (
     <>
