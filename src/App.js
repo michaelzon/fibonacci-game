@@ -76,30 +76,48 @@ function App() {
   const fibCache = getNthFibonacci(30);
   const fibs = Object.values(fibCache);
   const fibSet = new Set(fibs);
-  console.log('fibCache;', fibCache)
+
+  const verticalSeqs = []; 
+
+  for (let i = 0; i < size; i++){
+    const seq = [];
+    for (let j = clickedRow - 4; j <= clickedRow; j++) {
+      const key = `${j}:${i}`
+      let value = map.get(key);
+      seq.push(value);
+    }
+    verticalSeqs.push(seq);
+  }
+
+  console.log('vertical seqs', verticalSeqs);
 
   const checkSequences = () => {
     const newMap = new Map(map);
 
     // todo maak collectie van sequenties van de regio die je wil gaan beoordelen 
-    const verticalSeqs = [];
+    // const verticalSeqs = [];
 
     // eerst verticaal
     const seq = [];
 
-    for (let i = 0; i < size; i++) {
-      for (let j = 4; j >= 0; j--) {
-        // dit werkt voor nu alleen nog maar voor eerste kolom
-        let value = map.get(`${clickedRow - j}:${i}`)
-  
+    for (let col = 0; col < size; col++) {
+      
+      for (let row = 0; row < 5; row++) {
+        let value = map.get(`${clickedRow - row}:${col}`)
         // value is eerst null of undefined, maar deze check kan wel weg als die useEffect en de trigger voor deze functie beter is. 
-        if (value !== null || value !== undefined) {
-          seq.push(value);
+        if (value !== null && value !== undefined) {
+          // seq.push(value);
         }
+
+        // console.log('seq that is put into vertical seqs', seq);
+
       };
+      // verticalSeqs.push(seq)
+
   
-      verticalSeqs.push(seq)
     }
+
+    // console.log('verticalSeqs', verticalSeqs);
 
    
 
@@ -107,23 +125,23 @@ function App() {
     // console.log(seq[i]);
     // }
 
-
+    const seq2 = [1, 1, 1, 1, 1];
     // het is alleen true als ze er allemaal onderdeel van zijn en als de set een grote heeft van 5, elk element binnen een set moet uniek zijn.
-    const seqSet = new Set(seq);
+    const seqSet = new Set(seq2);
     const fibInSeq = seqSet.isSubsetOf(fibSet) && seqSet.size === 5;
 
-    console.log('fibset', fibSet);
-    console.log('seqset', seqSet);
-    console.log('fib in seq', fibInSeq)
+    // console.log('fibset', fibSet);
+    // console.log('seqset', seqSet);
+    // console.log('fib in seq', fibInSeq)
 
     // todo check ook nog of ze achtereenvolgend in de fiboseq zijn. ik retrieve de key uit de cache met de eerste value van de sequence (en daarmee ook de laagste, hoef ik minder te ittereren tijdens het ophalen van de key en ga daarna gewoon kijken of de vier values van de opeenvolgende keys uit het cache object overeenkomen met de waardes in mijn cache. )
     // moet je wel aparte regels schrijven voor wanner je van boven naar onder gaat controleren? of je sorteert ze gewoon eerst altijd oplopend 
     // je wil dit ook pas doen als fibInSeq op true staat, anders gaat ie onnodig values opzoeken die toch niet in de fibreeks staan. 
     
-    console.log('seqje dat we gaan checken:', seq)
-    let keyForLookUp = Number(getKeyByValue(fibCache, seq[0]));
+    // console.log('seqje dat we gaan checken:', seq2)
+    let keyForLookUp = Number(getKeyByValue(fibCache, seq2[0]));
 
-    console.log('eerste element uit seq heeft key in fibocache:', keyForLookUp);
+    // console.log('eerste element uit seq heeft key in fibocache:', keyForLookUp);
 
     let consecutiveFibos = false;
 
@@ -131,12 +149,12 @@ function App() {
 
       for (let i = 0; i < 5; i++) {
         // Increment keyForLookUp by i
-        console.log('keyForLookUp', keyForLookUp);
-        console.log('i', i);
+        // console.log('keyForLookUp', keyForLookUp);
+        // console.log('i', i);
         const adjacentKey = keyForLookUp+i;
-        console.log('adjacentKey', adjacentKey);
-        console.log('fibCache[adjacentKey]', fibCache[adjacentKey])
-        if (seq[i] === fibCache[adjacentKey]){
+        // console.log('adjacentKey', adjacentKey);
+        // console.log('fibCache[adjacentKey]', fibCache[adjacentKey])
+        if (seq2[i] === fibCache[adjacentKey]){
           consecutiveFibos = true
         }
         else {
@@ -144,7 +162,7 @@ function App() {
         };
       }
   
-      console.log('consecutive fibos', consecutiveFibos);
+      // console.log('consecutive fibos', consecutiveFibos);
     }
 
     if (fibInSeq && consecutiveFibos) {
