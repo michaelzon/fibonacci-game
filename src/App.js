@@ -47,7 +47,7 @@ import './App.css';
 
 // console.log('processSequenceFirefox', processSequenceFirefox);
 
-const size = 10;
+const size = 12;
 
 const getNthFibonacci = (n, cache = { 1: 1, 2: 1 }) => {
   if (n in cache) {
@@ -77,13 +77,22 @@ function App() {
   const fibs = Object.values(fibCache);
   const fibSet = new Set(fibs);
 
-  const verticalSeqs = []; 
+  const verticalSeqs = []
 
+
+  const verticalSeqsForCol = []
+
+  // dit is een check voor als je klikt op de rij waar je wil eindigen met de seq die je aan het maken bent. Dus vanaf rij 4... van boven naar onder.
   for (let i = 0; i < size; i++){
     const seq = [];
     for (let j = clickedRow - 4; j <= clickedRow; j++) {
       const key = `${j}:${i}`
       let value = map.get(key);
+
+      // hier kan je ook nog conditional doen dat de value niet in fibset voorkomt en dan kan je die subset van functie laterop skippen
+      if (value === null || value === undefined ) {
+        break
+      }
       seq.push(value);
     }
     verticalSeqs.push(seq);
@@ -91,18 +100,16 @@ function App() {
 
   console.log('vertical seqs', verticalSeqs);
 
+  
+
   const checkSequences = () => {
     const newMap = new Map(map);
 
-    // todo maak collectie van sequenties van de regio die je wil gaan beoordelen 
-    // const verticalSeqs = [];
-
-    // eerst verticaal
-    const seq = [];
-
     for (let col = 0; col < size; col++) {
       
+
       for (let row = 0; row < 5; row++) {
+
         let value = map.get(`${clickedRow - row}:${col}`)
         // value is eerst null of undefined, maar deze check kan wel weg als die useEffect en de trigger voor deze functie beter is. 
         if (value !== null && value !== undefined) {
