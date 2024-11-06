@@ -1,90 +1,44 @@
 import {useState, useEffect} from 'react';
 import './App.css';
+import {isFibonacci} from "./helpers/isFibonacci";
 
-const size = 12;
-const fibonacciSequence = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181];
+const size = 10;
 
 function App() {
     const [map, setMap] = useState(new Map());
     const [clickedRow, setClickedRow] = useState(null);
     const [clickedCol, setClickedCol] = useState(null);
-    const seqLength = 5;
-
-    var totalSeq = {};
-
-    for (let col = 0; col < size; col++) {
-
-        // verticaal
-        for (let row = -seqLength + 1; row < seqLength; row++) {
-            const x = clickedRow + row
-            const key = `${x}:${col}`
-            let value = map.get(key);
-
-            if (value !== null && value !== undefined) {
-                console.log('key', key, 'value', value);
-            }
-
-            if (value === null || value === undefined) {
-                break
-            }
-
-            totalSeq[key] = value;
-        }
-    }
-
-    console.log('totalSeq', totalSeq)
-
-    const verticalSeqs = []
-    const verticalSeqsForCol = []
-
-    // dit is een check voor als je klikt op de rij waar je wil eindigen met de seq die je aan het maken bent. Dus vanaf rij 4... van boven naar onder.
-    for (let i = 0; i < size; i++) {
-        const seq = [];
-        // for (let k = 0; k < 5; k++)
-
-        for (let j = clickedRow - 4; j <= clickedRow; j++) {
-            const key = `${j}:${i}`
-            let value = map.get(key);
-
-            // hier kan je ook nog conditional doen dat de value niet in fibset voorkomt en dan kan je die subset van functie laterop skippen
-            if (value === null || value === undefined) {
-                break
-            }
-            seq.push(value);
-        }
-        verticalSeqs.push(seq);
-    }
-
-    console.log('vertical seqs', verticalSeqs);
-
-    const checkSequences = () => {
-      const newMap = new Map(map);
-      for (let col = 0; col < size; col++) {
-        const seq = []
-        for (let row = 0; row < 5; row++) {
-          let value = map.get(`${clickedRow - row}:${col}`)
-          if (value !== null && value !== undefined) {
-            seq.push(value);
-          }
-        }
-        verticalSeqs.push(seq)
-      }
-    }
-
-
-    const checkClickedHorizontalRow = () => {
-        const newMap = new Map(map);
-        console.log('newMap', newMap);
-    }
+    const seqLength = 3;
+    let fibonacciCount = 0;
+    
 
     useEffect(() => {
-        checkSequences();
-        checkClickedHorizontalRow();
+        console.log('clickedCol', clickedCol)
+        console.log('clickedRow', clickedRow)
+        console.log('map', map)
+        checkMapForFibonacciNumbers()
     }, [map])
+
+
+    const cellsToCheck = {}
+
+    const checkMapForFibonacciNumbers = () => {
+        map.forEach((value, key) => {
+            if (isFibonacci(value)) {
+                fibonacciCount++
+                cellsToCheck[key] = value;
+                // console.log(`${value} (at key '${key}') is a Fibonacci number.`);
+            } else {
+                // console.log(`${value} (at key '${key}') is NOT a Fibonacci number.`);
+            }
+        })
+        // console.log("Total Fibonacci numbers found:", fibonacciCount);
+    };
+
+    console.log('cells to check', cellsToCheck);
 
     const incrementCells = (row, col, map) => {
 
-        // this can be set elsewhere, not a really nice spot, needed for check sequences functies because its lagging behind
         setClickedRow(row);
         setClickedCol(col);
 
