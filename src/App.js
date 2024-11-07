@@ -2,45 +2,41 @@ import {useEffect, useState} from 'react';
 import './App.css';
 import {isFibonacci} from "./helpers/isFibonacci";
 
-const fibos = [0,
-    1,
-    1,
-    2,
-    3,
-    5,
-    8,
-    13,
-    21,
-    34,
-    55,
-    89,
-    144,
-    233,
-    377,
-    610,
-    987,
-    1597,
-    2584,
-    4181]
-
-const listOfFibs = [{"6:0": 6}, {"5:0": 5}, {"6:0": 6}]
-
-
-const size = 12;
+const size = 10;
 
 function App() {
     const [map, setMap] = useState(new Map());
     const [clickedRow, setClickedRow] = useState(null);
     const [clickedCol, setClickedCol] = useState(null);
-    const sequenceLength = 5;
-    let fibonacciCount = 0;
-
+    const consecutiveFibThreshold = 5;
 
     useEffect(() => {
         collectFibs()
-        searchFibNeighboursHorizontally()
+        // const seqsLeftToRight = searchFibsLeftToRight() // todo elke keer nieuwe grid opbouwen na checken en dan verwijderen van cellen? Want als je straks zes fibs achter elkaar hebt, heb je een probleem.
+        // console.log("seqs left to right", seqsLeftToRight)
+        // const seqsRightToLeft = searchFibsRightToLeft()
+        // console.log("seqs right to left", seqsRightToLeft)
+        // const seqsTopToBottom = searchFibsTopToBottom();
+        // console.log("seqs top to bottom", seqsTopToBottom);
+        // const seqsBottomToTop = searchFibsBottomToTop();
+        // console.log("seqs bottom to top", seqsBottomToTop);
+
+        const allFibs = [
+            searchFibsLeftToRight(),
+            searchFibsRightToLeft(),
+            searchFibsTopToBottom(),
+            searchFibsBottomToTop()
+        ];
+
+        clearCells(allFibs);
+        console.log('fibNeighbours', allFibs);
+
     }, [map])
 
+    const clearCells = (allFibs) => {
+        console.log(allFibs)
+        // todo update grid
+    }
 
     const fibsToCheck = {}
 
@@ -64,55 +60,151 @@ function App() {
         });
     }
 
+    const searchFibsLeftToRight = () => {
+        const seqsLeftToRight = [];
 
-    const sequences = [];
+        for (let row = 0; row < size; row++) {
+            for (let startCol = 0; startCol <= size - consecutiveFibThreshold; startCol++) {
+                const seq = []; // Temporary sequence for current set of 5 coordinates
 
-    const fiboInRowsToBeChecked = [];
-    console.log('fiboInRowsToBeChecked', fiboInRowsToBeChecked)
+                for (let offset = 0; offset < consecutiveFibThreshold; offset++) {
+                    const col = startCol + offset;
+                    const coordinate = `${row}:${col}`;
 
-    // ze zijn hier eerst voor row en dan voor column gesorteerd 0:0 0:5 0:6
-    const searchFibNeighboursHorizontally = () => {
-        const coordinates = sortCoordinates();
-        for (let i = 0; i < coordinates.length; i++) {
-            console.log(coordinates[i])
+                    if (coordinate in fibsToCheck) {
+                        const value = fibsToCheck[coordinate];
+
+                        // if seq has less than two add otherwise we don't have enough for comparison
+                        if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
+                            seq.push({ coordinate, value });
+                        } else {
+                            break; // Stop   if the value doesn't follow the Fibonacci-like rule
+                        }
+
+                    } else {
+                        break
+                    }
+
+                    if (seq.length === consecutiveFibThreshold) {
+                        seq.forEach((element) => {
+                            delete fibsToCheck[element.coordinate] // we don't want elements be checked twice by searchers for other directions or remove more than the specified length
+                        })
+                        seqsLeftToRight.push(seq);
+                    }
+                }
+            }
         }
-        // for (let col = 0; col < size; col++) {
-        //     const fibo = fibsToCheck[`0:${col}`];
-        //
-        //     fiboInRowsToBeChecked.push(fibo)
-        // }
+        return seqsLeftToRight;
+    };
+    console.log('fibsToBechecked', fibsToCheck);
 
-        // sequences.push(keysSorted.slice(i, i + sequenceLength))
-        // for (let j = 0; j < sequenceLength; j++) {
-        //     const key = keysSorted[i + j];
-        // const rowIndex = parseInt(Array.from(key)[0]);
-        // const colIndex = parseInt(key.slice(-1));
-        // console.log('key 1', key);
-        // console.log('key 2', rowIndex, colIndex);
-        // console.log('value', fibsToCheck[keysSorted[i + j]]);
-        // sequence.push({key: keysSorted[i + j], value: fibsToCheck[keysSorted[i + j]]});
-    }
-    // sequences.push(sequence)
-    // }
+    const searchFibsRightToLeft = () => {
+        const seqsRightToLeft = []; // To store all found sequences
 
-    // const rowIndex = parseInt(Array.from(key)[0]);
-    // const colIndex = parseInt(key.slice(-1));
-    // const rowIndex = Array.from(key)[0];
-    // const colIndex = key.slice(-1);
-    // console.log('rowIndex', rowIndex)
-    // console.log('colIndex', colIndex)
-    // console.log('key', key);
-    // console.log('value', value);
-    // const keys = Object.keys(fibsToCheck);
-    // console.log(keys);
+        for (let row = 0; row < size; row++) {
+            for (let startCol = size - 1; startCol >= consecutiveFibThreshold - 1; startCol--) {
+                const seq = []; // Temporary sequence for current set of 5 coordinates
 
-    console.log('sequences', sequences)
+                for (let offset = 0; offset < consecutiveFibThreshold; offset++) {
+                    const col = startCol - offset;
+                    const coordinate = `${row}:${col}`;
+
+                    if (coordinate in fibsToCheck) {
+                        const value = fibsToCheck[coordinate];
+                        if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
+                            seq.push({ coordinate, value });
+                        } else {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+
+                if (seq.length === consecutiveFibThreshold) {
+                    seq.forEach((element) => {
+                        delete fibsToCheck[element.coordinate] // we don't want elements be checked twice by searchers for other directions or remove more than the specified length
+                    })
+                    seqsRightToLeft.push(seq);
+                }
+            }
+        }
+        return seqsRightToLeft;
+    };
+
+    const searchFibsTopToBottom = () => {
+        const seqsTopToBottom = []; // To store all found sequences
+
+        for (let col = 0; col < size; col++) {
+            for (let startRow = 0; startRow <= size - consecutiveFibThreshold; startRow++) {
+                const seq = []; // Temporary sequence for current set of 5 coordinatedinates
+
+                for (let offset = 0; offset < consecutiveFibThreshold; offset++) {
+                    const row = startRow + offset;
+                    const coordinate = `${row}:${col}`;
+
+                    if (coordinate in fibsToCheck) {
+                        const value = fibsToCheck[coordinate];
+
+                        if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
+                            seq.push({ coordinate, value });
+                        } else {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+
+                if (seq.length === consecutiveFibThreshold) {
+                    seq.forEach((element) => {
+                        delete fibsToCheck[element.coordinate] // we don't want elements be checked twice by searchers for other directions or remove more than the specified length
+                    })
+                    seqsTopToBottom.push(seq);
+                }
+            }
+        }
+        return seqsTopToBottom;
+    };
+
+    const searchFibsBottomToTop = () => {
+        const seqsBottomToTop = []; // To store all found sequences
+
+        for (let col = 0; col < size; col++) {
+            for (let startRow = size - 1; startRow >= consecutiveFibThreshold - 1; startRow--) {
+                const seq = []; // Temporary sequence for current set of 5 coordinates
+
+                for (let offset = 0; offset < consecutiveFibThreshold; offset++) {
+                    const row = startRow - offset;
+                    const coordinate = `${row}:${col}`;
+
+                    if (coordinate in fibsToCheck) {
+                        const value = fibsToCheck[coordinate];
+
+                        if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
+                            seq.push({ coordinate, value });
+                        } else {
+                            break;
+                        }
+                    } else {
+                        break; // Stop if the coordinate doesn't exist in fibsToCheck
+                    }
+                }
+
+                if (seq.length === consecutiveFibThreshold) {
+                    seq.forEach((element) => {
+                        delete fibsToCheck[element.coordinate] // we don't want elements be checked twice by searchers for other directions or remove more than the specified length
+                    })
+                    seqsBottomToTop.push(seq);
+                }
+            }
+        }
+        return seqsBottomToTop;
+    };
 
     const incrementCells = (row, col, map) => {
-
         setClickedRow(row);
         setClickedCol(col);
-
         const newMap = new Map(map);
 
         for (let x = 0; x < size; x++) {
@@ -131,7 +223,6 @@ function App() {
 
     const rows = Array.from(Array(size).keys());
     const columns = Array.from(Array(size).keys());
-
 
     return (
         <>
@@ -159,7 +250,6 @@ function App() {
                 ))}
                 </tbody>
             </table>
-            {/* <button onClick={() => geef()}> harry? </button> */}
         </>
     )
 }
