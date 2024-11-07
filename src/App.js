@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import './App.css';
 import {isFibonacci} from "./helpers/isFibonacci";
 
@@ -37,27 +37,33 @@ function App() {
 
 
     useEffect(() => {
-        // console.log('clickedCol', clickedCol)
-        // console.log('clickedRow', clickedRow)
         collectFibs()
         searchFibNeighboursHorizontally()
     }, [map])
 
 
     const fibsToCheck = {}
-    const fibsToCheckMap = new Map();
 
     const collectFibs = () => {
         map.forEach((value, key) => {
             if (isFibonacci(value)) {
                 fibsToCheck[key] = value;
-                fibsToCheckMap.set(key, value);
             }
         })
     };
 
-    // console.log(fibsToCheck)
-    // console.log(fibsToCheckMap)
+    const sortCoordinates = () => {
+        const keys = Object.keys(fibsToCheck);
+        return keys.toSorted((a, b) => {
+            const [rowA, colA] = a.split(":").map(Number);
+            const [rowB, colB] = b.split(":").map(Number);
+            if (rowA !== rowB) {
+                return rowA - rowB
+            }
+            return colA - colB;
+        });
+    }
+
 
     const sequences = [];
 
@@ -66,24 +72,28 @@ function App() {
 
     // ze zijn hier eerst voor row en dan voor column gesorteerd 0:0 0:5 0:6
     const searchFibNeighboursHorizontally = () => {
-        for (let col = 0; col < size; col++) {
-            const fibo = fibsToCheck[`0:${col}`];
-
-            fiboInRowsToBeChecked.push(fibo)
+        const coordinates = sortCoordinates();
+        for (let i = 0; i < coordinates.length; i++) {
+            console.log(coordinates[i])
         }
-
-            // sequences.push(keysSorted.slice(i, i + sequenceLength))
-            // for (let j = 0; j < sequenceLength; j++) {
-            //     const key = keysSorted[i + j];
-            // const rowIndex = parseInt(Array.from(key)[0]);
-            // const colIndex = parseInt(key.slice(-1));
-            // console.log('key 1', key);
-            // console.log('key 2', rowIndex, colIndex);
-            // console.log('value', fibsToCheck[keysSorted[i + j]]);
-            // sequence.push({key: keysSorted[i + j], value: fibsToCheck[keysSorted[i + j]]});
-        }
-        // sequences.push(sequence)
+        // for (let col = 0; col < size; col++) {
+        //     const fibo = fibsToCheck[`0:${col}`];
+        //
+        //     fiboInRowsToBeChecked.push(fibo)
         // }
+
+        // sequences.push(keysSorted.slice(i, i + sequenceLength))
+        // for (let j = 0; j < sequenceLength; j++) {
+        //     const key = keysSorted[i + j];
+        // const rowIndex = parseInt(Array.from(key)[0]);
+        // const colIndex = parseInt(key.slice(-1));
+        // console.log('key 1', key);
+        // console.log('key 2', rowIndex, colIndex);
+        // console.log('value', fibsToCheck[keysSorted[i + j]]);
+        // sequence.push({key: keysSorted[i + j], value: fibsToCheck[keysSorted[i + j]]});
+    }
+    // sequences.push(sequence)
+    // }
 
     // const rowIndex = parseInt(Array.from(key)[0]);
     // const colIndex = parseInt(key.slice(-1));
@@ -122,23 +132,6 @@ function App() {
     const rows = Array.from(Array(size).keys());
     const columns = Array.from(Array(size).keys());
 
-    function check([x, y]) {
-        return (x in coords) && (y in coords[x]);
-    }
-
-    var data = [[0, 1], [0, 2], [2, 3]];
-    var coords = new Map();
-
-    data.forEach(([x, y]) => {
-        console.log('x', x);
-        coords[x] = coords[x] || Object.create(null);
-        coords[x][y] = true;                          // or any other needed value
-    });
-
-    console.log(check([0, 2]));
-    console.log(check([0, 0]));
-    console.log('coords', coords);
-    console.log('map', map)
 
     return (
         <>
@@ -158,7 +151,8 @@ function App() {
                         {columns.map((col) => {
                             return (
                                 <td key={col}
-                                    onClick={() => incrementCells(row, col, map)}>{map.get(`${row}:${col}`) ? map.get(`${row}:${col}`) : ''}</td>
+                                    onClick={() => incrementCells(row, col, map)}>{map.get(`${row}:${col}`) ? map.get(`${row}:${col}`) : ''}
+                                </td>
                             )
                         })}
                     </tr>
