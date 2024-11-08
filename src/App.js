@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import './App.css';
 import {isFibonacci} from "./helpers/isFibonacci";
 
-const size = 10;
+const size = 20;
 
 function App() {
     const [map, setMap] = useState(new Map());
@@ -27,19 +27,24 @@ function App() {
             searchFibsTopToBottom(),
             searchFibsBottomToTop()
         ];
+        console.log('all fibs', allFibs)
 
-        clearCells(allFibs);
-        console.log('fibNeighbours', allFibs);
+    }, [map]);
 
-    }, [map])
+
+    const getCoordinates = (allFibs) => {
+        return allFibs.flat().flat().map(fib => fib.coordinate);
+
+    }
 
     const clearCells = (allFibs) => {
-        console.log(allFibs)
-        // todo update grid
+        const coordinates = getCoordinates(allFibs);
+        console.log('cooords', coordinates);
     }
 
     const fibsToCheck = {}
 
+    // hier gaat ie over elke cell heen en verzamelt waardes dat fibonacci getallen zijn.
     const collectFibs = () => {
         map.forEach((value, key) => {
             if (isFibonacci(value)) {
@@ -48,6 +53,7 @@ function App() {
         })
     };
 
+    // todo dit gebruik ik niet meer???
     const sortCoordinates = () => {
         const keys = Object.keys(fibsToCheck);
         return keys.toSorted((a, b) => {
@@ -73,7 +79,6 @@ function App() {
 
                     if (coordinate in fibsToCheck) {
                         const value = fibsToCheck[coordinate];
-
                         // if seq has less than two add otherwise we don't have enough for comparison
                         if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
                             seq.push({ coordinate, value });
@@ -96,7 +101,6 @@ function App() {
         }
         return seqsLeftToRight;
     };
-    console.log('fibsToBechecked', fibsToCheck);
 
     const searchFibsRightToLeft = () => {
         const seqsRightToLeft = []; // To store all found sequences
@@ -205,6 +209,7 @@ function App() {
     const incrementCells = (row, col, map) => {
         setClickedRow(row);
         setClickedCol(col);
+
         const newMap = new Map(map);
 
         for (let x = 0; x < size; x++) {
@@ -220,6 +225,7 @@ function App() {
         }
         setMap(newMap)
     }
+
 
     const rows = Array.from(Array(size).keys());
     const columns = Array.from(Array(size).keys());
