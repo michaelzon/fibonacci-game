@@ -1,57 +1,20 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import './App.css';
 import {isFibonacci} from "./helpers/isFibonacci";
+import {clear} from "@testing-library/user-event/dist/clear";
 
-const size = 20;
+const size = 50;
 
 function App() {
     const [map, setMap] = useState(new Map());
     const [clickedRow, setClickedRow] = useState(null);
     const [clickedCol, setClickedCol] = useState(null);
+    const [readyToClear, setReadyToClear] = useState(false);
     const consecutiveFibThreshold = 5;
-
-    useEffect(() => {
-        collectFibs()
-        // const seqsLeftToRight = searchFibsLeftToRight() // todo elke keer nieuwe grid opbouwen na checken en dan verwijderen van cellen? Want als je straks zes fibs achter elkaar hebt, heb je een probleem.
-        // console.log("seqs left to right", seqsLeftToRight)
-        // const seqsRightToLeft = searchFibsRightToLeft()
-        // console.log("seqs right to left", seqsRightToLeft)
-        // const seqsTopToBottom = searchFibsTopToBottom();
-        // console.log("seqs top to bottom", seqsTopToBottom);
-        // const seqsBottomToTop = searchFibsBottomToTop();
-        // console.log("seqs bottom to top", seqsBottomToTop);
-
-        const allFibs = [
-            searchFibsLeftToRight(),
-            searchFibsRightToLeft(),
-            searchFibsTopToBottom(),
-            searchFibsBottomToTop()
-        ];
-        console.log('all fibs', allFibs)
-
-    }, [map]);
-
-
-    const getCoordinates = (allFibs) => {
-        return allFibs.flat().flat().map(fib => fib.coordinate);
-
-    }
-
-    const clearCells = (allFibs) => {
-        const coordinates = getCoordinates(allFibs);
-        console.log('cooords', coordinates);
-    }
-
+    const allFibs = useRef([]);
+    const rows = Array.from(Array(size).keys());
+    const columns = Array.from(Array(size).keys());
     const fibsToCheck = {}
-
-    // hier gaat ie over elke cell heen en verzamelt waardes dat fibonacci getallen zijn.
-    const collectFibs = () => {
-        map.forEach((value, key) => {
-            if (isFibonacci(value)) {
-                fibsToCheck[key] = value;
-            }
-        })
-    };
 
     // todo dit gebruik ik niet meer???
     const sortCoordinates = () => {
@@ -81,13 +44,13 @@ function App() {
                         const value = fibsToCheck[coordinate];
                         // if seq has less than two add otherwise we don't have enough for comparison
                         if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
-                            seq.push({ coordinate, value });
+                            seq.push({coordinate, value});
                         } else {
-                            break; // Stop   if the value doesn't follow the Fibonacci-like rule
+                            break; // Stop if the value doesn't follow the Fibonacci-like rule
                         }
 
                     } else {
-                        break
+                        break // Stop if the coordinate doesn't exist in fibsToCheck
                     }
 
                     if (seq.length === consecutiveFibThreshold) {
@@ -103,11 +66,11 @@ function App() {
     };
 
     const searchFibsRightToLeft = () => {
-        const seqsRightToLeft = []; // To store all found sequences
+        const seqsRightToLeft = [];
 
         for (let row = 0; row < size; row++) {
             for (let startCol = size - 1; startCol >= consecutiveFibThreshold - 1; startCol--) {
-                const seq = []; // Temporary sequence for current set of 5 coordinates
+                const seq = [];
 
                 for (let offset = 0; offset < consecutiveFibThreshold; offset++) {
                     const col = startCol - offset;
@@ -116,7 +79,7 @@ function App() {
                     if (coordinate in fibsToCheck) {
                         const value = fibsToCheck[coordinate];
                         if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
-                            seq.push({ coordinate, value });
+                            seq.push({coordinate, value});
                         } else {
                             break;
                         }
@@ -127,7 +90,7 @@ function App() {
 
                 if (seq.length === consecutiveFibThreshold) {
                     seq.forEach((element) => {
-                        delete fibsToCheck[element.coordinate] // we don't want elements be checked twice by searchers for other directions or remove more than the specified length
+                        delete fibsToCheck[element.coordinate]
                     })
                     seqsRightToLeft.push(seq);
                 }
@@ -137,11 +100,11 @@ function App() {
     };
 
     const searchFibsTopToBottom = () => {
-        const seqsTopToBottom = []; // To store all found sequences
+        const seqsTopToBottom = [];
 
         for (let col = 0; col < size; col++) {
             for (let startRow = 0; startRow <= size - consecutiveFibThreshold; startRow++) {
-                const seq = []; // Temporary sequence for current set of 5 coordinatedinates
+                const seq = [];
 
                 for (let offset = 0; offset < consecutiveFibThreshold; offset++) {
                     const row = startRow + offset;
@@ -151,7 +114,7 @@ function App() {
                         const value = fibsToCheck[coordinate];
 
                         if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
-                            seq.push({ coordinate, value });
+                            seq.push({coordinate, value});
                         } else {
                             break;
                         }
@@ -162,7 +125,7 @@ function App() {
 
                 if (seq.length === consecutiveFibThreshold) {
                     seq.forEach((element) => {
-                        delete fibsToCheck[element.coordinate] // we don't want elements be checked twice by searchers for other directions or remove more than the specified length
+                        delete fibsToCheck[element.coordinate]
                     })
                     seqsTopToBottom.push(seq);
                 }
@@ -172,11 +135,11 @@ function App() {
     };
 
     const searchFibsBottomToTop = () => {
-        const seqsBottomToTop = []; // To store all found sequences
+        const seqsBottomToTop = [];
 
         for (let col = 0; col < size; col++) {
             for (let startRow = size - 1; startRow >= consecutiveFibThreshold - 1; startRow--) {
-                const seq = []; // Temporary sequence for current set of 5 coordinates
+                const seq = [];
 
                 for (let offset = 0; offset < consecutiveFibThreshold; offset++) {
                     const row = startRow - offset;
@@ -186,18 +149,18 @@ function App() {
                         const value = fibsToCheck[coordinate];
 
                         if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
-                            seq.push({ coordinate, value });
+                            seq.push({coordinate, value});
                         } else {
                             break;
                         }
                     } else {
-                        break; // Stop if the coordinate doesn't exist in fibsToCheck
+                        break;
                     }
                 }
 
                 if (seq.length === consecutiveFibThreshold) {
                     seq.forEach((element) => {
-                        delete fibsToCheck[element.coordinate] // we don't want elements be checked twice by searchers for other directions or remove more than the specified length
+                        delete fibsToCheck[element.coordinate]
                     })
                     seqsBottomToTop.push(seq);
                 }
@@ -226,9 +189,50 @@ function App() {
         setMap(newMap)
     }
 
+    const getCoordinates = (allFibs) => {
+        return allFibs.flat().flat().map(fib => fib.coordinate);
+    }
 
-    const rows = Array.from(Array(size).keys());
-    const columns = Array.from(Array(size).keys());
+    const clearCells = (allFibs) => {
+        const coordinates = getCoordinates(allFibs);
+        const newMap = new Map(map);
+        coordinates.forEach(coordinate => {
+            newMap.delete(coordinate);
+        })
+        setMap(newMap);
+        setReadyToClear(false);
+    }
+
+    const collectFibs = () => {
+        map.forEach((value, key) => {
+            if (isFibonacci(value)) {
+                fibsToCheck[key] = value;
+            }
+        });
+
+        allFibs.current = [
+            searchFibsLeftToRight(),
+            searchFibsRightToLeft(),
+            searchFibsTopToBottom(),
+            searchFibsBottomToTop()
+        ];
+
+        if (allFibs.current.flat().length > 0) {
+            setTimeout(() => {
+                setReadyToClear(true);
+            }, 500)
+        }
+    };
+
+    useEffect(() => {
+        collectFibs();
+    }, [map]);
+
+    useEffect(() => {
+        if (readyToClear) {
+            clearCells(allFibs.current);
+        }
+    }, [readyToClear]);
 
     return (
         <>
