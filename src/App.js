@@ -1,9 +1,8 @@
 import {useEffect, useRef, useState} from 'react';
 import './App.css';
 import {isFibonacci} from "./helpers/isFibonacci";
-import {clear} from "@testing-library/user-event/dist/clear";
 
-const size = 50;
+const size = 12;
 
 function App() {
     const [map, setMap] = useState(new Map());
@@ -16,21 +15,38 @@ function App() {
     const columns = Array.from(Array(size).keys());
     const fibsToCheck = {}
 
-    // todo dit gebruik ik niet meer???
-    const sortCoordinates = () => {
-        const keys = Object.keys(fibsToCheck);
-        return keys.toSorted((a, b) => {
-            const [rowA, colA] = a.split(":").map(Number);
-            const [rowB, colB] = b.split(":").map(Number);
-            if (rowA !== rowB) {
-                return rowA - rowB
+    const getCoordinate = (row, col) => `${row}:${col}`;
+
+    const processFibonacciSequence = (seq, row, col) => {
+        const coordinate = getCoordinate(row, col);
+
+        if (coordinate in fibsToCheck) {
+            const value = fibsToCheck[coordinate];
+
+            // if seq has less than two add otherwise we don't have enough for comparison + a check to ensure that
+            // each new value in the sequence is equal to the sum of the previous two values.
+            if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
+                seq.push({coordinate, value});
+                return true;
+            } else {
+                return false; // Stop by returning false if the value doesn't follow the Fibonacci-like rule
             }
-            return colA - colB;
-        });
+        }
+        return false; // Or stop if the coordinate doesn't exist in fibsToCheck
+    };
+
+    const removeAndStoreValidFibSequences = (seqs, seq) => {
+        if (seq.length === consecutiveFibThreshold) {
+            seq.forEach((element) => {
+                delete fibsToCheck[element.coordinate]
+            })
+            seqs.push(seq);
+        }
+        return seqs;
     }
 
     const searchFibsLeftToRight = () => {
-        const seqsLeftToRight = [];
+        let seqs = [];
 
         for (let row = 0; row < size; row++) {
             for (let startCol = 0; startCol <= size - consecutiveFibThreshold; startCol++) {
@@ -38,35 +54,20 @@ function App() {
 
                 for (let offset = 0; offset < consecutiveFibThreshold; offset++) {
                     const col = startCol + offset;
-                    const coordinate = `${row}:${col}`;
 
-                    if (coordinate in fibsToCheck) {
-                        const value = fibsToCheck[coordinate];
-                        // if seq has less than two add otherwise we don't have enough for comparison
-                        if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
-                            seq.push({coordinate, value});
-                        } else {
-                            break; // Stop if the value doesn't follow the Fibonacci-like rule
-                        }
-
-                    } else {
-                        break // Stop if the coordinate doesn't exist in fibsToCheck
-                    }
-
-                    if (seq.length === consecutiveFibThreshold) {
-                        seq.forEach((element) => {
-                            delete fibsToCheck[element.coordinate] // we don't want elements be checked twice by searchers for other directions or remove more than the specified length
-                        })
-                        seqsLeftToRight.push(seq);
+                    if (!processFibonacciSequence(seq, row, col)) {
+                        break;
                     }
                 }
+
+                seqs = removeAndStoreValidFibSequences(seqs, seq)
             }
         }
-        return seqsLeftToRight;
+        return seqs;
     };
 
     const searchFibsRightToLeft = () => {
-        const seqsRightToLeft = [];
+        let seqs = [];
 
         for (let row = 0; row < size; row++) {
             for (let startCol = size - 1; startCol >= consecutiveFibThreshold - 1; startCol--) {
@@ -74,33 +75,21 @@ function App() {
 
                 for (let offset = 0; offset < consecutiveFibThreshold; offset++) {
                     const col = startCol - offset;
-                    const coordinate = `${row}:${col}`;
 
-                    if (coordinate in fibsToCheck) {
-                        const value = fibsToCheck[coordinate];
-                        if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
-                            seq.push({coordinate, value});
-                        } else {
-                            break;
-                        }
-                    } else {
+                    if (!processFibonacciSequence(seq, row, col)) {
                         break;
                     }
                 }
 
-                if (seq.length === consecutiveFibThreshold) {
-                    seq.forEach((element) => {
-                        delete fibsToCheck[element.coordinate]
-                    })
-                    seqsRightToLeft.push(seq);
-                }
+                seqs = removeAndStoreValidFibSequences(seqs, seq)
             }
         }
-        return seqsRightToLeft;
+        return seqs;
     };
 
+
     const searchFibsTopToBottom = () => {
-        const seqsTopToBottom = [];
+        let seqs = [];
 
         for (let col = 0; col < size; col++) {
             for (let startRow = 0; startRow <= size - consecutiveFibThreshold; startRow++) {
@@ -108,34 +97,20 @@ function App() {
 
                 for (let offset = 0; offset < consecutiveFibThreshold; offset++) {
                     const row = startRow + offset;
-                    const coordinate = `${row}:${col}`;
 
-                    if (coordinate in fibsToCheck) {
-                        const value = fibsToCheck[coordinate];
-
-                        if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
-                            seq.push({coordinate, value});
-                        } else {
-                            break;
-                        }
-                    } else {
+                    if (!processFibonacciSequence(seq, row, col)) {
                         break;
                     }
                 }
 
-                if (seq.length === consecutiveFibThreshold) {
-                    seq.forEach((element) => {
-                        delete fibsToCheck[element.coordinate]
-                    })
-                    seqsTopToBottom.push(seq);
-                }
+                seqs = removeAndStoreValidFibSequences(seqs, seq)
             }
         }
-        return seqsTopToBottom;
-    };
+        return seqs;
+    }
 
     const searchFibsBottomToTop = () => {
-        const seqsBottomToTop = [];
+        let seqs = [];
 
         for (let col = 0; col < size; col++) {
             for (let startRow = size - 1; startRow >= consecutiveFibThreshold - 1; startRow--) {
@@ -143,31 +118,17 @@ function App() {
 
                 for (let offset = 0; offset < consecutiveFibThreshold; offset++) {
                     const row = startRow - offset;
-                    const coordinate = `${row}:${col}`;
 
-                    if (coordinate in fibsToCheck) {
-                        const value = fibsToCheck[coordinate];
-
-                        if (seq.length < 2 || value === seq[seq.length - 1].value + seq[seq.length - 2].value) {
-                            seq.push({coordinate, value});
-                        } else {
-                            break;
-                        }
-                    } else {
+                    if (!processFibonacciSequence(seq, row, col)) {
                         break;
                     }
                 }
 
-                if (seq.length === consecutiveFibThreshold) {
-                    seq.forEach((element) => {
-                        delete fibsToCheck[element.coordinate]
-                    })
-                    seqsBottomToTop.push(seq);
-                }
+                seqs = removeAndStoreValidFibSequences(seqs, seq)
             }
         }
-        return seqsBottomToTop;
-    };
+        return seqs;
+    }
 
     const incrementCells = (row, col, map) => {
         setClickedRow(row);
