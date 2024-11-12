@@ -1,8 +1,8 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import './App.css';
 import {isFibonacci} from "./helpers/isFibonacci";
 
-const size = 12;
+const size = 50;
 
 function App() {
     const [map, setMap] = useState(new Map());
@@ -11,9 +11,12 @@ function App() {
     const [readyToClear, setReadyToClear] = useState(false);
     const consecutiveFibThreshold = 5;
     const allFibs = useRef([]);
-    const rows = Array.from(Array(size).keys());
-    const columns = Array.from(Array(size).keys());
-    const fibsToCheck = {}
+    const fibsToCheck = useRef({});
+    const [clearingCells, setClearingCells] = useState([]);
+
+    // cache the result of rows and columns between re-renders so we don't have to recalculate
+    const rows = useMemo(() => Array.from(Array(size).keys()), [size]);
+    const columns = useMemo(() => Array.from(Array(size).keys()), [size]);
 
     const getCoordinate = (row, col) => `${row}:${col}`;
 
@@ -150,18 +153,25 @@ function App() {
         setMap(newMap)
     }
 
-    const getCoordinates = (allFibs) => {
+    const getFlattenedCoordinates = (allFibs) => {
         return allFibs.flat().flat().map(fib => fib.coordinate);
     }
 
     const clearCells = (allFibs) => {
-        const coordinates = getCoordinates(allFibs);
-        const newMap = new Map(map);
-        coordinates.forEach(coordinate => {
-            newMap.delete(coordinate);
-        })
-        setMap(newMap);
-        setReadyToClear(false);
+        const coordinates = getFlattenedCoordinates(allFibs);
+
+        // Set cells to be cleared, triggering the animation
+        setClearingCells(coordinates);
+
+        setTimeout(() => {
+            const newMap = new Map(map);
+            coordinates.forEach(coordinate => {
+                newMap.delete(coordinate);
+            });
+            setMap(newMap);
+            setClearingCells([]);
+            setReadyToClear(false);
+        }, 500)
     }
 
     const collectFibs = () => {
@@ -213,7 +223,9 @@ function App() {
                         {columns.map((col) => {
                             return (
                                 <td key={col}
-                                    onClick={() => incrementCells(row, col, map)}>{map.get(`${row}:${col}`) ? map.get(`${row}:${col}`) : ''}
+                                    onClick={() => incrementCells(row, col, map)}
+                                    className={clearingCells.includes(`${row}:${col}`) ? 'clearing' : ''}
+                                >{map.get(`${row}:${col}`) ? map.get(`${row}:${col}`) : ''}
                                 </td>
                             )
                         })}
