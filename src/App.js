@@ -2,7 +2,7 @@ import {useEffect, useMemo, useRef, useState} from 'react';
 import './App.css';
 import {isFibonacci} from "./helpers/isFibonacci";
 
-const size = 50;
+const size = 48;
 
 function App() {
     const [map, setMap] = useState(new Map());
@@ -11,8 +11,28 @@ function App() {
     const [readyToClear, setReadyToClear] = useState(false);
     const consecutiveFibThreshold = 5;
     const allFibs = useRef([]);
-    const fibsToCheck = useRef({});
-    const [clearingCells, setClearingCells] = useState([]);
+    let fibsToCheck = useRef({});
+    const [clearingCells, setClearingCells] = useState([]); // todo check if this could be ref
+    const [currentColor, setCurrentColor] = useState("");
+    const [fibColors, setFibColors] = useState({});
+
+    const colors = [
+        "#d2aa5c", "#c1994c", "#b1883f", "#9d7733",
+        "#ad8b52", "#967748", "#7f613f", "#6b5035", // additional
+        "#6b8e7a", "#5f7d6a", "#536c5a", "#4a6050",
+        "#4c715e", "#3f5e4d", "#355040", "#2a4133", // additional
+        "#317589", "#2b6577", "#285a6a", "#1f4d5d",
+        "#266575", "#1f5665", "#174956", "#123847", // additional
+        "#8a4b73", "#7a4166", "#6b385a", "#5d2f4e",
+        "#774061", "#6b3856", "#5e2f4a", "#502640",  // Additional Purples
+        "#e5708b", "#c45470", "#9c4359", "#9b2f40",
+        "#d66779", "#b45761", "#9a4a56", "#813d47",
+        "#6f6158", "#5e5149", "#4e423c", "#3e332f"   // Grays/Browns for Neutral Tones
+    ];
+
+    const getColorByPosition = (row) => {
+        return colors[row % colors.length]; // Loop through rowColors for larger grids
+    };
 
     // cache the result of rows and columns between re-renders so we don't have to recalculate
     const rows = useMemo(() => Array.from(Array(size).keys()), [size]);
@@ -159,7 +179,6 @@ function App() {
 
     const clearCells = (allFibs) => {
         const coordinates = getFlattenedCoordinates(allFibs);
-
         // Set cells to be cleared, triggering the animation
         setClearingCells(coordinates);
 
@@ -174,12 +193,19 @@ function App() {
         }, 500)
     }
 
+    // todo make this into three functions
     const collectFibs = () => {
+        let newFibColors = {};
+
         map.forEach((value, key) => {
             if (isFibonacci(value)) {
                 fibsToCheck[key] = value;
+                const i = key.indexOf(":")
+                const row = key.substring(0, i);
+                newFibColors[key] = getColorByPosition(row);
             }
         });
+        setFibColors(newFibColors);
 
         allFibs.current = [
             searchFibsLeftToRight(),
@@ -205,6 +231,7 @@ function App() {
         }
     }, [readyToClear]);
 
+
     return (
         <>
             <table>
@@ -221,11 +248,14 @@ function App() {
                     <tr key={row}>
                         <td className='first'>{row}</td>
                         {columns.map((col) => {
+                            const coordinate = getCoordinate(row, col);
                             return (
                                 <td key={col}
                                     onClick={() => incrementCells(row, col, map)}
-                                    className={clearingCells.includes(`${row}:${col}`) ? 'clearing' : ''}
-                                >{map.get(`${row}:${col}`) ? map.get(`${row}:${col}`) : ''}
+                                    className={`${clearingCells.includes(coordinate) ? 'clearing' : ''}`}
+                                    style={{backgroundColor: fibColors[coordinate] || 'transparent'}}
+                                >
+                                    {map.get(coordinate) ? map.get(coordinate) : ''}
                                 </td>
                             )
                         })}

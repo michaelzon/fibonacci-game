@@ -14,10 +14,14 @@
     animation: clearSequence 0.5s ease forwards;
 }
 
+/*.colouring {*/
+/*    background-color: red;*/
+/*    animation: 0.5s ease backwards;*/
+/*}*/
+
 body {
     font-family: 'Courier New', 'Courier', monospace;
     margin: 0;
-    padding: 0;
     background-color: var(--very-light-gray);
     color: var(--very-dark-gray);
     text-transform: uppercase;
@@ -27,13 +31,25 @@ body {
     height: 100vh;
 }
 
+@media only screen and (min-width: 1512px) {
+    body {
+        padding: 256px 0;
+    }
+}
+
+@media only screen and (min-width: 2100px) {
+    body {
+        padding: 16px 0;
+    }
+}
 
 table {
     border-collapse: collapse;
     margin: 1rem;
     background-color: var(--white-but-not-too-white);
     border-radius: 10px;
-    overflow: scroll; /* Enable scrolling if the table exceeds max dimensions */    box-shadow: 0px 4px 10px var(--very-dark-gray-light);
+    overflow: scroll; /* Enable scrolling if the table exceeds max dimensions */
+    box-shadow: 0px 4px 10px var(--very-dark-gray-light);
     max-width: 95vw;
     max-height: 70vh;
 }
@@ -44,10 +60,10 @@ td {
     height: 20px;
     padding: 1px;
     text-align: center;
-    font-weight: 400;
+    font-weight: 800;
     border: 1px solid var(--very-dark-gray-light);
     font-size: 0.8rem; /* Adjust font size for small cells */
-    color: var(--very-dark-gray);
+    color: var(--very-light-gray);
     transition: background-color 0.3s ease;
 }
 
