@@ -13,22 +13,41 @@ function App() {
     const allFibs = useRef([]);
     let fibsToCheck = useRef({});
     const [clearingCells, setClearingCells] = useState([]); // todo check if this could be ref
-    const [currentColor, setCurrentColor] = useState("");
     const [fibColors, setFibColors] = useState({});
 
+    // const colors = [
+    //     "#e5708b", "#c45470", "#9c4359", "#9b2f40",
+    //     "#6b8e7a", "#5f7d6a", "#d2aa5c", "#c1994c",
+    //     "#317589", "#a3483a", "#f4c842"
+    // ];
+
+    // const colors = [
+    //     "#d2aa5c", "#c1994c", "#b1883f", "#9d7733",
+    //     "#ad8b52", "#967748", "#7f613f", "#6b5035", // additional
+    //     "#6b8e7a", "#5f7d6a", "#536c5a", "#4a6050",
+    //     "#4c715e", "#3f5e4d", "#355040", "#2a4133", // additional
+    //     "#317589", "#2b6577", "#285a6a", "#1f4d5d",
+    //     "#266575", "#1f5665", "#174956", "#123847", // additional
+    //     "#8a4b73", "#7a4166", "#6b385a", "#5d2f4e",
+    //     "#774061", "#6b3856", "#5e2f4a", "#502640",  // Additional Purples
+    //     "#e5708b", "#c45470", "#9c4359", "#9b2f40",
+    //     "#d66779", "#b45761", "#9a4a56", "#813d47",
+    //     "#6f6158", "#5e5149", "#4e423c", "#3e332f"   // Grays/Browns for Neutral Tones
+    // ];
     const colors = [
         "#d2aa5c", "#c1994c", "#b1883f", "#9d7733",
-        "#ad8b52", "#967748", "#7f613f", "#6b5035", // additional
         "#6b8e7a", "#5f7d6a", "#536c5a", "#4a6050",
-        "#4c715e", "#3f5e4d", "#355040", "#2a4133", // additional
         "#317589", "#2b6577", "#285a6a", "#1f4d5d",
-        "#266575", "#1f5665", "#174956", "#123847", // additional
-        "#8a4b73", "#7a4166", "#6b385a", "#5d2f4e",
-        "#774061", "#6b3856", "#5e2f4a", "#502640",  // Additional Purples
         "#e5708b", "#c45470", "#9c4359", "#9b2f40",
-        "#d66779", "#b45761", "#9a4a56", "#813d47",
-        "#6f6158", "#5e5149", "#4e423c", "#3e332f"   // Grays/Browns for Neutral Tones
     ];
+
+    const getColorForFibValue = (value) => {
+        const index = Math.min(
+            colors.length - 1,
+            Math.floor(Math.log(value) / Math.log(2)) // Adjust the base to control granularity
+        );
+        return colors[index];
+    };
 
     const getColorByPosition = (row) => {
         return colors[row % colors.length]; // Loop through rowColors for larger grids
@@ -193,6 +212,7 @@ function App() {
         }, 500)
     }
 
+
     // todo make this into three functions
     const collectFibs = () => {
         let newFibColors = {};
@@ -200,9 +220,11 @@ function App() {
         map.forEach((value, key) => {
             if (isFibonacci(value)) {
                 fibsToCheck[key] = value;
-                const i = key.indexOf(":")
-                const row = key.substring(0, i);
-                newFibColors[key] = getColorByPosition(row);
+
+                // const row = key.substring(0, key.indexOf(":"));
+                // newFibColors[key] = getColorByPosition(row);
+
+                newFibColors[key] = getColorForFibValue(value);
             }
         });
         setFibColors(newFibColors);
@@ -253,7 +275,7 @@ function App() {
                                 <td key={col}
                                     onClick={() => incrementCells(row, col, map)}
                                     className={`${clearingCells.includes(coordinate) ? 'clearing' : ''}`}
-                                    style={{backgroundColor: fibColors[coordinate] || 'transparent'}}
+                                    style={fibColors[coordinate] ? { backgroundColor: fibColors[coordinate] } : { color: "black" , backgroundColor: 'transparent' }}
                                 >
                                     {map.get(coordinate) ? map.get(coordinate) : ''}
                                 </td>
