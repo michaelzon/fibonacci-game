@@ -2,7 +2,7 @@ import {useEffect, useMemo, useRef, useState} from 'react';
 import './App.css';
 import {isFibonacci} from "./helpers/isFibonacci";
 
-const size = 48;
+const size = 50;
 
 function App() {
     const [map, setMap] = useState(new Map());
@@ -47,10 +47,6 @@ function App() {
             Math.floor(Math.log(value) / Math.log(2)) // Adjust the base to control granularity
         );
         return colors[index];
-    };
-
-    const getColorByPosition = (row) => {
-        return colors[row % colors.length]; // Loop through rowColors for larger grids
     };
 
     // cache the result of rows and columns between re-renders so we don't have to recalculate
@@ -198,7 +194,7 @@ function App() {
 
     const clearCells = (allFibs) => {
         const coordinates = getFlattenedCoordinates(allFibs);
-        // Set cells to be cleared, triggering the animation
+        // Set cells to be cleared, triggering the animation //todo check of dit samen hangt met die keyframe
         setClearingCells(coordinates);
 
         setTimeout(() => {
@@ -220,13 +216,10 @@ function App() {
         map.forEach((value, key) => {
             if (isFibonacci(value)) {
                 fibsToCheck[key] = value;
-
-                // const row = key.substring(0, key.indexOf(":"));
-                // newFibColors[key] = getColorByPosition(row);
-
                 newFibColors[key] = getColorForFibValue(value);
             }
         });
+
         setFibColors(newFibColors);
 
         allFibs.current = [
@@ -275,7 +268,7 @@ function App() {
                                 <td key={col}
                                     onClick={() => incrementCells(row, col, map)}
                                     className={`${clearingCells.includes(coordinate) ? 'clearing' : ''}`}
-                                    style={fibColors[coordinate] ? { backgroundColor: fibColors[coordinate] } : { color: "black" , backgroundColor: 'transparent' }}
+                                    style={fibColors[coordinate] ? { backgroundColor: fibColors[coordinate] } : { color: "white" , backgroundColor: 'transparent' }}
                                 >
                                     {map.get(coordinate) ? map.get(coordinate) : ''}
                                 </td>
