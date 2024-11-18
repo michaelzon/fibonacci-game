@@ -1,0 +1,89 @@
+@keyframes fadeInAnimation {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal {
+    background: var(--very-dark-gray-lighter);
+    border: 3px solid var(--very-dark-gray-light);
+    display: flex;
+    flex-direction: column;
+    min-height: 30rem;
+    min-width: 22rem;
+    max-height: 36rem;
+    max-width: 30rem;
+    border-radius: 0.6rem;
+    padding: 2.5rem 1.5rem 2rem 1.5rem;
+    animation: fadeInAnimation 1s;
+    color: white;
+    justify-content: space-around;
+}
+
+.modal__emoji-content {
+    display: flex;
+    font-size: 5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal__header-content {
+    margin: 0;
+    font-size: 1.6rem;
+    text-align: center;
+}
+
+.modal__description {
+    text-align: center;
+}
+
+.modal__description-content {
+    font-size: 1rem;
+    margin: 0.8rem 0 0 0;
+}
+
+.modal__body {
+    text-align: center;
+}
+
+.modal__body-content {
+    font-size: 1rem;
+}
+
+.modal__button {
+    font-family: 'Courier New', 'Courier', monospace;
+    background: #317589;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 4rem;
+    width: 100%;
+    border-radius: 0.4rem;
+    outline: none;
+    border: none;
+    color: var(--very-light-gray);
+    font-weight: bold;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    cursor: pointer;
+    font-size: 1.6rem;
+    transition: background-color 0.3s ease;
+}
+
+.modal__button:hover {
+    background-color: #285a6a;
+    color: var(--very-light-gray-dark);
+}
+
+
+
+
