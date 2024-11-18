@@ -1,87 +1,131 @@
-# Getting Started with Create React App
+# Fibonacci: The Grid Puzzle Game
+
+Welcome to **Fibonacci: The Grid Puzzle Game**, a strategic and mathematical puzzle where you clear the grid by aligning Fibonacci numbers. This project was implemented as part of a programming assignment and serves as an engaging introduction to game development, strategic planning, and React.
+
+---
+
+## 🧩 Game Instructions
+
+Dive into the world of Fibonacci with this unique puzzle game! The rules are simple:
+1. **Grid Setup**: Start with a **50x50 grid**.
+2. **Incrementing Cells**:
+    - Click on a cell to increment its value by 1.
+    - All other cells in the **same row and column** will also increment by 1.
+    - If a cell is empty, it is set to 1.
+3. **Clearing Fibonacci Numbers**:
+    - Align **5 consecutive Fibonacci numbers** in a row or column to clear them from the grid.
+    - Fibonacci numbers include: `1, 1, 2, 3, 5, 8, 13, ...`.
+4. **Scoring**:
+    - Points are awarded based on the Fibonacci numbers you clear.
+    - Plan wisely to set up chain reactions for higher scores.
+
+### Objective
+
+Clear the grid, maximize your score, and test your strategic thinking. Good luck!
+
+---
+
+## 🚀 Features
+
+- **Dynamic Gameplay**: A 50x50 grid with responsive controls and real-time updates.
+- **Strategic Mechanics**: Increment cells, align Fibonacci numbers, and plan chain reactions.
+- **Score Tracking**: Earn points based on the cleared Fibonacci numbers.
+- **Responsive UI**: Built with React for a seamless and interactive experience.
+- **Customizable**: Easily scalable for different grid sizes or rules.
+
+---
+
+## 🛠️ Getting Started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+### Prerequisites
 
-In the project directory, you can run:
+Ensure you have **Node.js** and **npm** installed.
 
-### `npm start`
+### Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. Clone this repository:
+   ```bash
+   git clone <repository_url>
+   cd <repository_folder>
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Running the Application
 
-### `npm test`
+1. Start the development server:
+   ```bash
+   npm start
+   ```
+2. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## 📜 Scripts
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Start**: Run the app in development mode:
+  ```bash
+  npm start
+  ```
+- **Build**: Create an optimized production build:
+  ```bash
+  npm run build
+  ```
+- **Test**: Launch the test runner in watch mode:
+  ```bash
+  npm test
+  ```
+- **Eject**: Remove Create React App abstraction (irreversible):
+  ```bash
+  npm run eject
+  ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## ✨ Highlights of the Code
 
-### `npm run eject`
+### Key Functionalities
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **Dynamic Fibonacci Detection**:
+    - Automatically detects and clears 5 consecutive Fibonacci numbers in rows and columns.
+    - Fibonacci detection is optimized for performance on a 50x50 grid.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- **Real-Time Score Updates**:
+    - Score updates dynamically based on the Fibonacci numbers cleared.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- **CSS Animations**:
+    - Cells animate when cleared, adding a visual flair to gameplay.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Core Components
 
-## Learn More
+- **Modal**: A welcoming instruction modal to guide new players.
+- **Game Logic**: Efficient handling of grid updates, Fibonacci checks, and cell clearing.
+- **Responsive Grid**: A dynamically rendered 50x50 grid.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🧮 Fibonacci Logic Example
 
-### Code Splitting
+If the following row is present:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+| 1 | 1 | 2 | 3 | 5 |  
+|---|---|---|---|---|
 
-### Analyzing the Bundle Size
+The game detects the Fibonacci sequence (`1, 1, 2, 3, 5`) and clears it.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
 
 
-# Sollicitatiegesprek 2: programmeeropdracht
+## 🔗 Resources
 
-Voor het tweede sollicitatiegesprek vragen we je onderstaande opdracht te maken. Graag ontvangen we je oplossing in deze repository 24 uur voor het interview. Je oplossing dient als startpunt om samen tijdens het gesprek verder van gedachten te wisselen.
+- [React Documentation](https://reactjs.org/)
+- [Create React App Documentation](https://create-react-app.dev/docs/getting-started/)
+- [Fibonacci Sequence](https://en.wikipedia.org/wiki/Fibonacci_number)
 
-## Instructies
+---
 
-> Q42 is een nieuw spel aan het bouwen voor een klant. Jij werkt hier aan mee. De briefing is als volgt: Het begint met een 50x50 grid. Als je een cel kiest, worden alle cellen in die rij en kolom met 1 opgehoogd. Was een cel leeg, dan wordt die op 1 gezet. Als 5 elkaar in de Fibonacci-reeks opvolgende getallen naast elkaar staan, worden ze leeggemaakt. Implementeer dit spel met de programmeertaal die je het beste vindt passen. De interface (bv. web, app, console, punch cards, etc.) en de soort interactie bij het kiezen van een cel mag je zelf bepalen.
 
-# Job interview 2: programming assignment
-
-For this second interview, we ask you to complete the assignment below. We would like to receive your solution in this repository 24 hours before the interview. Your solution serves as a starting point for further exchanging ideas during the conversation.
-
-## Instructions
-
-> Q42 is working on a new game for a client, and you have been asked to help implement it. The briefing is as follows: The starting point is a 50x50 grid. When a cell is chosen, all cells in the same row and column are incremented by 1. If a cell was empty, it is set to 1. When 5 consecutive numbers from the Fibonacci series are next to each other, these cells should be cleared. Use the programming language of your choice. The interface (e.g. web, app, console, punch cards, etc.) and type of interaction of choosing a cell is for you to decide.
