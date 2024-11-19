@@ -1,5 +1,6 @@
-import {useMemo, useState} from "react";
-import {getCoordinate} from "../helpers/gridHelpers";
+import {useEffect, useMemo, useRef, useState} from "react";
+import {getColorForFibValue, getCoordinate, getFlattenedCoordinates} from "../helpers/gridHelpers";
+import {isFibonacci} from "../helpers/isFibonacci";
 
 export const useFibonacciGrid = (size, consecutiveFibThreshold, fibsToCheck) => {
 
@@ -7,6 +8,12 @@ export const useFibonacciGrid = (size, consecutiveFibThreshold, fibsToCheck) => 
     const rows = useMemo(() => Array.from(Array(size).keys()), [size]);
     const columns = useMemo(() => Array.from(Array(size).keys()), [size]);
     const [score, setScore] = useState(0);
+    const [clickedRow, setClickedRow] = useState(null);
+    const [clickedCol, setClickedCol] = useState(null);
+    const [map, setMap] = useState(new Map());
+    const [readyToClear, setReadyToClear] = useState(false);
+    const [fibColors, setFibColors] = useState({});
+    const allFibs = useRef([]);
 
     const processFibonacciSequence = (seq, row, col) => {
         const coordinate = getCoordinate(row, col);
@@ -135,6 +142,76 @@ export const useFibonacciGrid = (size, consecutiveFibThreshold, fibsToCheck) => 
         return seqs;
     }
 
-    return {rows, columns, searchFibsLeftToRight, searchFibsRightToLeft, searchFibsTopToBottom, searchFibsBottomToTop, score}
+    const incrementCells = (row, col, map) => {
+        setClickedRow(row);
+        setClickedCol(col);
+
+        const newMap = new Map(map);
+
+        for (let x = 0; x < size; x++) {
+            const key = `${row}:${x}`;
+            const colVal = map.get(key);
+            newMap.set(key, (colVal === undefined || isNaN(colVal)) ? 1 : colVal + 1)
+        }
+
+        for (let y = 0; y < size; y++) {
+            const key = `${y}:${col}`;
+            const rowVal = map.get(key);
+            newMap.set(key, (rowVal === undefined || isNaN(rowVal)) ? 1 : rowVal + 1)
+        }
+        setMap(newMap)
+    }
+
+    const clearCells = (allFibs) => {
+        const coordinates = getFlattenedCoordinates(allFibs);
+
+        setTimeout(() => {
+            const newMap = new Map(map);
+            coordinates.forEach(coordinate => {
+                newMap.delete(coordinate);
+            });
+            setMap(newMap);
+            setReadyToClear(false);
+        }, 500)
+    }
+
+    // todo make this into three functions
+    const collectFibs = () => {
+        let newFibColors = {};
+
+        map.forEach((value, key) => {
+            if (isFibonacci(value)) {
+                fibsToCheck[key] = value;
+                newFibColors[key] = getColorForFibValue(value);
+            }
+        });
+
+        setFibColors(newFibColors);
+
+        allFibs.current = [
+            searchFibsLeftToRight(),
+            searchFibsRightToLeft(),
+            searchFibsTopToBottom(),
+            searchFibsBottomToTop()
+        ];
+
+        if (allFibs.current.flat().length > 0) {
+            setTimeout(() => {
+                setReadyToClear(true);
+            }, 500)
+        }
+    };
+
+    useEffect(() => {
+        collectFibs();
+    }, [map]);
+
+    useEffect(() => {
+        if (readyToClear) {
+            clearCells(allFibs.current);
+        }
+    }, [readyToClear]);
+
+    return {rows, columns, map, fibColors, score, incrementCells}
 
 }
