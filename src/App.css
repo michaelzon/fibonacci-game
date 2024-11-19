@@ -1,24 +1,4 @@
 @import url('./theme.css');
-@keyframes clearSequence {
-    0% {
-        opacity: 1;
-        transform: scale(1);
-    }
-    100% {
-        opacity: 0;
-        transform: scale(0.6);
-    }
-}
-
-
-.clearing {
-    animation: clearSequence 0.5s ease forwards;
-}
-
-/*.colouring {*/
-/*    background-color: red;*/
-/*    animation: 0.5s ease backwards;*/
-/*}*/
 
 header {
     display: flex;
@@ -80,10 +60,8 @@ table {
     margin: 1rem;
     background-color: var(--very-dark-gray);
     border-radius: 10px;
-    overflow: scroll; /* Enable scrolling if the table exceeds max dimensions */
-    /*box-shadow: 10px 10px 5px var(--white-but-not-too-white);*/
+    overflow: scroll;
     filter: drop-shadow(48px 32px 10px var(--white-but-not-too-white));
-    animation: fadeInAnimation 4s;
     max-width: 95vw;
     max-height: 70vh;
     text-transform: uppercase;
