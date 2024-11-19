@@ -1,4 +1,4 @@
-import {getCoordinate} from "../../helpers/gridHelpers";
+import {Cell} from "../Cell/Cell";
 
 export const Grid = ({columns, rows, incrementCells, fibColors, map}) => {
     return (
@@ -15,22 +15,7 @@ export const Grid = ({columns, rows, incrementCells, fibColors, map}) => {
             {rows.map((row) => (
                 <tr key={row}>
                     <td className='first'>{row}</td>
-                    {columns.map((col) => {
-                        const coordinate = getCoordinate(row, col);
-                        return (
-                            <td key={col}
-                                onClick={() => incrementCells(row, col, map)}
-                                style={fibColors[coordinate] ? {backgroundColor: fibColors[coordinate]} : {
-                                    color: "white",
-                                    backgroundColor: 'transparent'
-                                }}
-                            >
-                                {map.get(coordinate) ? map.get(coordinate) : ''}
-                            </td>
-                            // <Cell col={col} incrementCells={incrementCells} row={row} map={map} coordinate={coordinate} fibColors={fibColors}/>
-
-                        )
-                    })}
+                    {columns.map((col) => <Cell col={col} row={row} map={map} incrementCells={incrementCells} fibColors={fibColors}/>)}
                 </tr>
             ))}
             </tbody>

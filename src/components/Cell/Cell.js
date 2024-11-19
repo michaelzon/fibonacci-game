@@ -1,19 +1,17 @@
+import {getCoordinate} from "../../helpers/gridHelpers";
 
-export const Cell = ({col, incrementCells, row, map, clearingCells, fibColors}) => {
-    const getCoordinate = (row, col) => `${row}:${col}`;
-
+export const Cell = ({col, row, map, incrementCells, fibColors}) => {
     const coordinate = getCoordinate(row, col);
 
     return (
-        <td
+        <td key={col}
             onClick={() => incrementCells(row, col, map)}
-            className={`${clearingCells.includes(coordinate) ? 'clearing' : ''}`}
             style={fibColors[coordinate] ? {backgroundColor: fibColors[coordinate]} : {
                 color: "white",
                 backgroundColor: 'transparent'
             }}
         >
-           {map.get(coordinate) ? map.get(coordinate) : ''}
+            {map.get(coordinate) ? map.get(coordinate) : ''}
         </td>
     );
 }
