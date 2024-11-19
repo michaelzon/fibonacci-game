@@ -1,7 +1,10 @@
 import {useEffect, useMemo, useRef, useState} from 'react';
 import './App.css';
 import {isFibonacci} from "./helpers/isFibonacci";
-import {Modal} from "./Modal";
+import {FibonacciModal} from "./components/FibonacciModal/FibonacciModal";
+import {Cell} from "./components/Cell/Cell";
+import {useFibonacciGrid} from "./hooks/useFibonacciGrid";
+import {getCoordinate, getFlattenedCoordinates, getColorForFibValue} from "./helpers/gridHelpers";
 
 const size = 50;
 
@@ -19,27 +22,10 @@ function App() {
     const emojis = ['🔢', '🌿', '🌀'];
     const emoji = emojis[Math.floor(Math.random() * emojis.length)];
     const [score, setScore] = useState(0);
-
-    const colors = [
-        "#d2aa5c", "#c1994c", "#b1883f", "#9d7733",
-        "#6b8e7a", "#5f7d6a", "#536c5a", "#4a6050",
-        "#317589", "#2b6577", "#285a6a", "#1f4d5d",
-        "#e5708b", "#c45470", "#9c4359", "#9b2f40",
-    ];
-
-    const getColorForFibValue = (value) => {
-        const index = Math.min(
-            colors.length - 1,
-            Math.floor(Math.log(value) / Math.log(2)) // Adjust the base to control granularity
-        );
-        return colors[index];
-    };
-
     // cache the result of rows and columns between re-renders so we don't have to recalculate
-    const rows = useMemo(() => Array.from(Array(size).keys()), [size]);
-    const columns = useMemo(() => Array.from(Array(size).keys()), [size]);
 
-    const getCoordinate = (row, col) => `${row}:${col}`;
+    const {rows, columns} = useFibonacciGrid(size)
+
 
     const processFibonacciSequence = (seq, row, col) => {
         const coordinate = getCoordinate(row, col);
@@ -70,7 +56,7 @@ function App() {
 
         setTimeout(() => {
             setScore((prevScore) => prevScore + seqScore);
-        }, 500)
+        }, 750)
 
         seqs.push(seq);
         return seqs;
@@ -189,24 +175,15 @@ function App() {
         setMap(newMap)
     }
 
-    const getFlattenedCoordinates = (allFibs) => {
-        return allFibs.flat().flat().map(fib => fib.coordinate);
-    }
-
     const clearCells = (allFibs) => {
-
         const coordinates = getFlattenedCoordinates(allFibs);
-
-        // Set cells to be cleared, triggering the animation //todo check of dit samen hangt met die keyframe
-        setClearingCells(coordinates);
-
+        
         setTimeout(() => {
             const newMap = new Map(map);
             coordinates.forEach(coordinate => {
                 newMap.delete(coordinate);
             });
             setMap(newMap);
-            setClearingCells([]);
             setReadyToClear(false);
         }, 500)
     }
@@ -230,8 +207,6 @@ function App() {
             searchFibsTopToBottom(),
             searchFibsBottomToTop()
         ];
-
-        console.log(allFibs)
 
         if (allFibs.current.flat().length > 0) {
             setTimeout(() => {
@@ -283,7 +258,6 @@ function App() {
                                     return (
                                         <td key={col}
                                             onClick={() => incrementCells(row, col, map)}
-                                            className={`${clearingCells.includes(coordinate) ? 'clearing' : ''}`}
                                             style={fibColors[coordinate] ? {backgroundColor: fibColors[coordinate]} : {
                                                 color: "white",
                                                 backgroundColor: 'transparent'
@@ -291,6 +265,8 @@ function App() {
                                         >
                                             {map.get(coordinate) ? map.get(coordinate) : ''}
                                         </td>
+                                        // <Cell col={col} incrementCells={incrementCells} row={row} map={map} coordinate={coordinate} fibColors={fibColors}/>
+
                                     )
                                 })}
                             </tr>
@@ -299,15 +275,7 @@ function App() {
                     </table>
                 </>
                 :
-                <Modal isOpen={modalIsOpen}>
-                    <Modal.BigEmoji>{emoji}</Modal.BigEmoji>
-                    <Modal.Header> {"Welcome to Fibonacci: The Grid Puzzle Game!"} </Modal.Header>
-                    <Modal.Description> {`Get ready to dive into the strategic and mathematical world of Fibonacci!`} </Modal.Description>
-                    <Modal.Body> {"In this strategic puzzle, your goal is to clear the grid by forming patterns of 5 consecutive Fibonacci numbers in a row or column. Start with a 50x50 grid and click a cell to increment its value by 1—along with all other cells in the same row and column. Empty cells become 1. Align Fibonacci numbers (e.g., 1, 1, 2, 3, 5), and those cells will clear, making space for new moves.\n" +
-                        "\n" +
-                        "Plan wisely, set up chain reactions, and aim for the highest score. Good luck!"} </Modal.Body>
-                    <Modal.Footer handleClose={handleStart}> Start </Modal.Footer>
-                </Modal>
+                <FibonacciModal modalIsOpen={modalIsOpen} emoji={emoji} handleStart={handleStart}/>
             }
         </>
     )
