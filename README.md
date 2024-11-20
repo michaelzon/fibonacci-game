@@ -1,7 +1,7 @@
 # Fibonacci: The Grid Puzzle Game
 
 Welcome to **Fibonacci: The Grid Puzzle Game**, a strategic and mathematical puzzle where you clear the grid by aligning Fibonacci numbers. This project was implemented as part of a programming assignment and serves as an engaging introduction to game development, strategic planning, and React.
-
+You can view and use the project live at https://fibonacci-game-two.vercel.app/
 ---
 
 ## 🧩 Game Instructions
@@ -35,56 +35,94 @@ Clear the grid, maximize your score, and test your strategic thinking. Good luck
 
 ---
 
-## 🛠️ Getting Started
+[//]: # (## 🛠️ Getting Started)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[//]: # ()
+[//]: # (This project was bootstrapped with [Create React App]&#40;https://github.com/facebook/create-react-app&#41;.)
 
-### Prerequisites
+[//]: # ()
+[//]: # (### Prerequisites)
 
-Ensure you have **Node.js** and **npm** installed.
+[//]: # ()
+[//]: # (Ensure you have **Node.js** and **npm** installed.)
 
-### Installation
+[//]: # ()
+[//]: # (### Installation)
 
-1. Clone this repository:
-   ```bash
-   git clone <repository_url>
-   cd <repository_folder>
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+[//]: # ()
+[//]: # (1. Clone this repository:)
 
-### Running the Application
+[//]: # (   ```bash)
 
-1. Start the development server:
-   ```bash
-   npm start
-   ```
-2. Open [http://localhost:3000](http://localhost:3000) in your browser.
+[//]: # (   git clone <repository_url>)
 
----
+[//]: # (   cd <repository_folder>)
 
-## 📜 Scripts
+[//]: # (   ```)
 
-- **Start**: Run the app in development mode:
-  ```bash
-  npm start
-  ```
-- **Build**: Create an optimized production build:
-  ```bash
-  npm run build
-  ```
-- **Test**: Launch the test runner in watch mode:
-  ```bash
-  npm test
-  ```
-- **Eject**: Remove Create React App abstraction (irreversible):
-  ```bash
-  npm run eject
-  ```
+[//]: # (2. Install dependencies:)
 
----
+[//]: # (   ```bash)
+
+[//]: # (   npm install)
+
+[//]: # (   ```)
+
+[//]: # ()
+[//]: # (### Running the Application)
+
+[//]: # ()
+[//]: # (1. Start the development server:)
+
+[//]: # (   ```bash)
+
+[//]: # (   npm start)
+
+[//]: # (   ```)
+
+[//]: # (2. Open [http://localhost:3000]&#40;http://localhost:3000&#41; in your browser.)
+
+[//]: # ()
+[//]: # (---)
+
+[//]: # ()
+[//]: # (## 📜 Scripts)
+
+[//]: # ()
+[//]: # (- **Start**: Run the app in development mode:)
+
+[//]: # (  ```bash)
+
+[//]: # (  npm start)
+
+[//]: # (  ```)
+
+[//]: # (- **Build**: Create an optimized production build:)
+
+[//]: # (  ```bash)
+
+[//]: # (  npm run build)
+
+[//]: # (  ```)
+
+[//]: # (- **Test**: Launch the test runner in watch mode:)
+
+[//]: # (  ```bash)
+
+[//]: # (  npm test)
+
+[//]: # (  ```)
+
+[//]: # (- **Eject**: Remove Create React App abstraction &#40;irreversible&#41;:)
+
+[//]: # (  ```bash)
+
+[//]: # (  npm run eject)
+
+[//]: # (  ```)
+
+[//]: # ()
+[//]: # (---)
 
 ## ✨ Highlights of the Code
 
