@@ -1,4 +1,4 @@
-import {Modal} from "../../Modal";
+import {Modal} from "../../reusable-components/Modal";
 
 
 export const FibonacciModal = ({modalIsOpen, emoji, handleStart}) => {

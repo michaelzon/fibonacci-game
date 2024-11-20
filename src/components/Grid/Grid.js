@@ -1,4 +1,5 @@
-import {Cell} from "../Cell/Cell";
+import {Cell} from "./Cell/Cell";
+import './Grid.css';
 
 export const Grid = ({columns, rows, incrementCells, fibColors, map}) => {
     return (

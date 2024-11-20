@@ -1,12 +1,8 @@
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {getColorForFibValue, getCoordinate, getFlattenedCoordinates} from "../helpers/gridHelpers";
 import {isFibonacci} from "../helpers/isFibonacci";
 
-export const useFibonacciGrid = (size, consecutiveFibThreshold, fibsToCheck) => {
-
-    // cache the result of rows and columns between re-renders so we don't have to recalculate
-    const rows = useMemo(() => Array.from(Array(size).keys()), [size]);
-    const columns = useMemo(() => Array.from(Array(size).keys()), [size]);
+export const useFibonacciGrid = (size, consecutiveFibThreshold) => {
     const [score, setScore] = useState(0);
     const [clickedRow, setClickedRow] = useState(null);
     const [clickedCol, setClickedCol] = useState(null);
@@ -14,6 +10,11 @@ export const useFibonacciGrid = (size, consecutiveFibThreshold, fibsToCheck) => 
     const [readyToClear, setReadyToClear] = useState(false);
     const [fibColors, setFibColors] = useState({});
     const allFibs = useRef([]);
+    const fibsToCheck = useRef({});
+
+    // cache the result of rows and columns between re-renders so we don't have to recalculate
+    const rows = useMemo(() => Array.from(Array(size).keys()), [size]);
+    const columns = useMemo(() => Array.from(Array(size).keys()), [size]);
 
     const processFibonacciSequence = (seq, row, col) => {
         const coordinate = getCoordinate(row, col);
@@ -50,7 +51,8 @@ export const useFibonacciGrid = (size, consecutiveFibThreshold, fibsToCheck) => 
         return seqs;
     }
 
-    const searchFibsLeftToRight = () => {
+    // heavy function so let cache the def with a callback so it does not get re-created between re-renders
+    const searchFibsLeftToRight = useCallback(() => {
         let seqs = [];
 
         for (let row = 0; row < size; row++) {
@@ -71,7 +73,8 @@ export const useFibonacciGrid = (size, consecutiveFibThreshold, fibsToCheck) => 
             }
         }
         return seqs;
-    };
+    }, [size, consecutiveFibThreshold]);
+
     const searchFibsRightToLeft = () => {
         let seqs = [];
 
@@ -175,31 +178,39 @@ export const useFibonacciGrid = (size, consecutiveFibThreshold, fibsToCheck) => 
         }, 500)
     }
 
-    // todo make this into three functions
     const collectFibs = () => {
-        let newFibColors = {};
+        updateFibColorsAndSaveFibsFromGrid();
+        allFibs.current = searchAllFibDirections();
+        if (allFibs.current.flat().length > 0) {
+            scheduleClearReady();
+        }
+    };
 
+    const updateFibColorsAndSaveFibsFromGrid = () => {
+        const newFibColors = {};
         map.forEach((value, key) => {
             if (isFibonacci(value)) {
                 fibsToCheck[key] = value;
                 newFibColors[key] = getColorForFibValue(value);
             }
         });
-
         setFibColors(newFibColors);
+        return newFibColors;
+    };
 
-        allFibs.current = [
+    const searchAllFibDirections = () => {
+        return [
             searchFibsLeftToRight(),
             searchFibsRightToLeft(),
             searchFibsTopToBottom(),
             searchFibsBottomToTop()
         ];
+    };
 
-        if (allFibs.current.flat().length > 0) {
-            setTimeout(() => {
-                setReadyToClear(true);
-            }, 500)
-        }
+    const scheduleClearReady = () => {
+        setTimeout(() => {
+            setReadyToClear(true);
+        }, 500);
     };
 
     useEffect(() => {

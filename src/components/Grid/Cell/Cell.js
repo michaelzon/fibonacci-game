@@ -1,4 +1,4 @@
-import {getCoordinate} from "../../helpers/gridHelpers";
+import {getCoordinate} from "../../../helpers/gridHelpers";
 
 export const Cell = ({col, row, map, incrementCells, fibColors}) => {
     const coordinate = getCoordinate(row, col);

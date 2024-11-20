@@ -1,0 +1,51 @@
+table {
+    border-collapse: collapse;
+    margin: 1rem;
+    background-color: var(--very-dark-gray);
+    border-radius: 10px;
+    overflow: scroll;
+    filter: drop-shadow(48px 32px 10px var(--white-but-not-too-white));
+    max-width: 95vw;
+    max-height: 70vh;
+    text-transform: uppercase;
+}
+
+table th,
+table td {
+    font-family: 'Courier New', 'Courier', monospace;
+}
+
+th,
+td {
+    width: 40px;
+    height: 20px;
+    padding: 1px;
+    text-align: center;
+    font-weight: 800;
+    border: 1px solid var(--very-dark-gray-light);
+    font-size: 0.8rem; /* Adjust font size for small cells */
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+td:hover {
+    background-color: var(--very-light-gray-dark);
+    cursor: pointer;
+}
+
+th {
+    border: none;
+    background-color: var(--very-dark-gray);
+    color: white;
+    font-weight: lighter;
+}
+
+.first {
+    border: none;
+    background-color: var(--very-dark-gray);
+    font-weight: lighter;
+}
+
+.invisible {
+    border: none;
+}
