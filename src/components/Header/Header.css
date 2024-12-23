@@ -9,7 +9,7 @@ header {
 header a {
     position: absolute;
     right: 0;
-    top: 0;
+    top: 1rem;
     margin-right: 1.6rem;
     text-decoration: underline;
     color: white;
