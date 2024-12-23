@@ -5,8 +5,15 @@ body {
     margin: 0;
     background-color: var(--very-dark-gray);
     color: var(--very-light-gray);
+    padding-bottom: 4rem;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+}
+
+@media only screen and (min-width: 2100px) {
+    .container{
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
 }

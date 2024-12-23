@@ -14,7 +14,7 @@ function App() {
     const {rows, columns, map, fibColors, score, incrementCells} = useFibonacciGrid(size, consecutiveFibThreshold)
 
     return (
-        <>
+        <div className={'container'}>
             {!modalIsOpen ?
                 <>
                     <Header score={score}/>
@@ -24,7 +24,7 @@ function App() {
                 :
                 <FibonacciModal modalIsOpen={modalIsOpen} emoji={emoji} handleStart={handleStart}/>
             }
-        </>
+        </div>
     )
 }
 
