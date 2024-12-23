@@ -13,6 +13,7 @@ header a {
     margin-right: 1.6rem;
     text-decoration: underline;
     color: white;
+    margin-top: 1rem;
 }
 
 .score-display {
@@ -22,3 +23,22 @@ header a {
     color: white;
     font-weight: bold;
 }
+
+/*@media only screen and (min-width: 2100px) {*/
+/*    header {*/
+/*        padding: 16px 0;*/
+/*    }*/
+/*}*/
+
+
+@media only screen and (min-width: 1512px) {
+    header {
+        padding-top: 45rem;
+    }
+}
+
+/*@media only screen and (min-width: 2100px) {*/
+/*    body {*/
+/*        padding: 16px 0;*/
+/*    }*/
+/*}*/

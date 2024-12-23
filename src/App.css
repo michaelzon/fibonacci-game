@@ -10,15 +10,3 @@ body {
     align-items: center;
     height: 100vh;
 }
-
-@media only screen and (min-width: 1512px) {
-    body {
-        padding: 256px 0;
-    }
-}
-
-@media only screen and (min-width: 2100px) {
-    body {
-        padding: 16px 0;
-    }
-}
